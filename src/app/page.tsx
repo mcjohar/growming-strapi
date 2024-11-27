@@ -5,6 +5,7 @@ import Navbar from "./component/Navbar";
 import PricingTabs from "./component/PricingTabs";
 import BarberGrid from "./component/BarberGrid";
 import Footer from "./component/Footer";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -18,8 +19,9 @@ export default function Home() {
               #GrowmingEveryday
             </div>
             <div className="max-w-[900px] text-[14px] pb-20">
-              <p className="pb-6">Upgrade gaya dan kesehatan rambut kamu di Growming! Dapatkan pengalaman cukur dan perawatan premium yang bikin rambut kamu tampil lebih rapi, stylish, dan terawat setiap saat.</p>
-              <button className="px-6 py-2 rounded-md font-semibold border-2 border-white text-white bg-transparent hover:bg-[#1a7241] hover:text-white hover:border-transparent rounded-[2px] transition-all duration-300">
+              <p className="pb-6">Upgrade gaya dan kesehatan rambut kamu di Growming! Dapatkan pengalaman cukur dan perawatan premium
+                yang bikin rambut kamu tampil lebih rapi, stylish, dan terawat setiap saat.</p>
+              <button className="px-6 py-2  font-semibold border-2 border-white text-white bg-transparent hover:bg-[#1a7241] hover:text-white hover:border-transparent rounded-[2px] transition-all duration-300">
                 Booking Sekarang
               </button>
 
@@ -39,11 +41,11 @@ export default function Home() {
         <div className="">
           <h1 className=" font-semibold text-3xl md:text-4xl md:max-w-lg">Hair Grooming and Styling you have to go</h1>
           <button className=" px-4 py-2 mt-10 mb-10 border-2 border-black text-black font-semibold text-xs rounded-md hover:bg-black hover:text-white transition">
-            Let's make a schedule
+            Let&apos;s make a schedule
           </button>
         </div>
         <div>
-          <img src="/icon/mainlogo.svg" alt="mainlogo" />
+          <Image src="/icon/mainlogo.svg" alt="mainlogo" width={500} height={12} />
         </div>
       </div>
       <Footer />
