@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import { Autoplay } from 'swiper/modules';
+import Image from 'next/image';
 
 const ImageSlider = () => {
     const images = [
@@ -23,7 +24,11 @@ const ImageSlider = () => {
         >
             {images.map((src, index) => (
                 <SwiperSlide key={index}>
-                    <img src={src} alt={`Slide ${index + 1}`} className="w-full h-full object-cover" />
+                    <Image src={src} alt={`Slide ${index + 1}`}
+                        width={1000}
+                        height={540}
+
+                        className="w-full h-full object-cover" />
                 </SwiperSlide>
             ))}
         </Swiper>
