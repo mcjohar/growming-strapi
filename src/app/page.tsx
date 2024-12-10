@@ -1,36 +1,41 @@
 import Information from "./component/Information";
-import ImageSlider from "./component/ImageSlider";
 import Navbar from "./component/Navbar";
 import PricingTabs from "./component/PricingTabs";
 import BarberGrid from "./component/BarberGrid";
 import Footer from "./component/Footer";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
     <div>
       <div
-        className="items-center bg-cover bg-center  h-screen overflow-hidden"
-        style={{ backgroundImage: "url(/image/bg-banner.png)" }}
+        className="items-center bg-center  h-screen overflow-hidden"
+        style={{
+          backgroundImage: "url(/image/dua.jpg)",
+          backgroundSize: "cover",
+        }}
       >
         <Navbar />
-        <div className="flex justify-between text-white px-12">
-          <div className=" flex flex-col justify-between h-screen py-24">
-            <div className="text-2xl font-semibold">#GrowmingEveryday</div>
-            <div className="max-w-[900px] text-[14px] pb-20">
-              <p className="pb-6">
-                Upgrade gaya dan kesehatan rambut kamu di Growming! Dapatkan
-                pengalaman cukur dan perawatan premium yang bikin rambut kamu
-                tampil lebih rapi, stylish, dan terawat setiap saat.
-              </p>
-              <button className="px-6 py-2  font-semibold border-2 border-white text-white bg-transparent hover:bg-[#1a7241] hover:text-white hover:border-transparent rounded-[2px] transition-all duration-300">
-                Booking Sekarang
-              </button>
-            </div>
-          </div>
-          <div className="hidden lg:block overflow-hidden pl-72 ">
-            <ImageSlider />
-          </div>
+        <div className="flex flex-col justify-center items-center h-screen text-white ">
+          <Image
+            src="/icon/logofontwhite.svg"
+            alt="Growming"
+            width={522}
+            height={72}
+            className="max-w-72 h-auto md:max-w-[350px]"
+          />
+          <p className="tracking-[0.4em] font-semibold text-shadow-xl">
+            HAIR STUDIO
+          </p>
+          <p className=" font-semibold mt-16 text-center text-shadow-xl">
+            WHERE YOUR HAIR<br></br> TRULY MATTER
+          </p>
+          <Button variant="secondary" className="mt-16">
+            <a href="https://example.com" className="block w-full text-center">
+              Book Now
+            </a>
+          </Button>
         </div>
       </div>
       <Information />
@@ -38,7 +43,7 @@ export default function Home() {
       <BarberGrid />
       <br />
       <br />
-      <div className="bg-[#ECF3EF] py-12 px-4 md:flex justify-between md:px-28">
+      <div className="bg-white py-12 px-4 md:flex justify-between md:px-28">
         <div className="">
           <h1 className=" font-semibold text-3xl md:text-4xl md:max-w-lg">
             Hair Grooming and Styling you have to go
@@ -51,15 +56,15 @@ export default function Home() {
           <Image
             src="/icon/mainlogo.svg"
             alt="mainlogo"
-            width={500}
+            width={400}
             height={12}
           />
         </div>
       </div>
       <Footer />
 
-      <div className="bg-[#ECF3EF] text-black text-center font-medium text-xs p-2">
-        Copyright © 2024 PT. Power Growming Indonesia Ganteng
+      <div className="bg-white text-black text-center font-medium text-xs p-2">
+        Copyright © 2024 PT. Power Growming Indonesia
       </div>
     </div>
   );
