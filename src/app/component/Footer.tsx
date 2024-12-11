@@ -9,7 +9,14 @@ export default function Footer() {
           <div className="mb-4">
             <h1 className="font-semibold">Alamat :</h1>
             <p>
-              Jl. Komjen.Pol.M.Jasin Jl. Klp. Dua Raya No.46, Kota Depok, 16451
+              <a
+                href="https://maps.app.goo.gl/HjMCpS4a9WWdvuLE7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className=" hover:underline"
+              >
+                Jl. Komjen.Pol.M.Jasin Jl. Klp. Dua Raya No.46, Kota Depok, 16451
+              </a>
             </p>
           </div>
           <div className="mb-4">

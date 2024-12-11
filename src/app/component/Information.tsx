@@ -41,10 +41,14 @@ export default function Information() {
           className=""
         />
         <div className="text-center md:text-left">
-          <h1 className="font-semibold mb-1">
-            Jl. Komjen.Pol.M.Jasin Jl. Klp. Dua Raya No.46, Kota Depok, 16451
-          </h1>
-          <p className="font-light text-sm">( Kopdar - Kopi Darsini )</p>
+          <a href="https://maps.app.goo.gl/HjMCpS4a9WWdvuLE7"
+            target="_blank"
+            rel="noopener noreferrer">
+            <h1 className="font-semibold mb-1">
+              Jl. Komjen.Pol.M.Jasin Jl. Klp. Dua Raya No.46, Kota Depok, 16451
+            </h1>
+            <p className="font-light text-sm">( Kopdar - Kopi Darsini )</p>
+          </a>
         </div>
       </div>
     </div>
