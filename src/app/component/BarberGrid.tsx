@@ -62,7 +62,7 @@ export default function BarberGrid() {
               />
             </div>
 
-            {/* Informasi nama dan rating berada di atas tombol, tidak di atas gambar */}
+
             <div className="text-left p-4 -mt-20  text-white">
               <h3 className="font-bold text-shadow-lg">{barber.name}</h3>
               <p className="text-sm mb-2 text-shadow-lg">
@@ -70,7 +70,7 @@ export default function BarberGrid() {
               </p>
             </div>
             <div className="text-center">
-              <a href="https://widget.zenwel.com/490250546/growming-studio?lang=id&lid=13300"
+              <a href="/booking"
                 target="_blank"
                 rel="noopener noreferrer">
                 <button className=" px-8 py-2 mt-8 border-2 border-black text-black font-semibold rounded-md hover:bg-black hover:text-white transition">

@@ -32,7 +32,7 @@ export default function Home() {
             WHERE YOUR HAIR<br></br> TRULY MATTER
           </p>
           <Button variant="secondary" className="mt-16">
-            <a href="https://widget.zenwel.com/490250546/growming-studio?lang=id&lid=13300"
+            <a href="/booking"
               target="_blank"
               className="block w-full text-center">
               Book Now
@@ -50,7 +50,7 @@ export default function Home() {
           <h1 className=" font-semibold text-3xl md:text-4xl md:max-w-lg">
             Hair Grooming and Styling you have to go
           </h1>
-          <a href="https://widget.zenwel.com/490250546/growming-studio?lang=id&lid=13300"
+          <a href="/booking"
             target="_blank"
             rel="noopener noreferrer">
             <button className=" px-4 py-2 mt-10 mb-10 border-2 border-black text-black font-semibold text-xs rounded-md hover:bg-black hover:text-white transition"
