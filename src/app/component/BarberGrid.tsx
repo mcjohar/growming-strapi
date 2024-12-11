@@ -70,9 +70,12 @@ export default function BarberGrid() {
               </p>
             </div>
             <div className="text-center">
-              <button className=" px-8 py-2 mt-8 border-2 border-black text-black font-semibold rounded-md hover:bg-black hover:text-white transition">
-                Book
-              </button>
+              <a href="https://widget.zenwel.com/490250546/growming-studio?lang=id&lid=13300"
+                target="_blank">
+                <button className=" px-8 py-2 mt-8 border-2 border-black text-black font-semibold rounded-md hover:bg-black hover:text-white transition">
+                  Book
+                </button>
+              </a>
             </div>
           </div>
         ))}
