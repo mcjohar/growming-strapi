@@ -13,7 +13,7 @@ export default function Footer() {
                 href="https://maps.app.goo.gl/HjMCpS4a9WWdvuLE7"
                 target="_blank"
                 rel="noopener noreferrer"
-                className=" hover:underline"
+                className="hover:underline"
               >
                 Jl. Komjen.Pol.M.Jasin Jl. Klp. Dua Raya No.46, Kota Depok, 16451
               </a>
@@ -28,14 +28,20 @@ export default function Footer() {
           </div>{" "}
           <div className="">
             <h1 className="font-semibold">Reserved :</h1>
-            <p>+62 811 8712 334</p>
+            <p>
+              <a href="http://wa.me/628118712334"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline">+62 811 8712 334
+              </a>
+            </p>
           </div>
         </div>
       </div>
       <div>
         <div className="flex space-x-8 items-center p-2">
           <a
-            href="https://www.tiktok.com"
+            href="https://www.tiktok.com/@growming.studio?_t=ZS-8s7id7z82J0&_r=1"
             target="_blank"
             rel="noopener noreferrer"
           >

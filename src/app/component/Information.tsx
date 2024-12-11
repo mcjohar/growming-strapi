@@ -12,7 +12,11 @@ export default function Information() {
           className=""
         />
         <div className="text-center md:text-left">
-          <h1 className="font-semibold mb-1">+62 811 8712 334</h1>
+          <a href="http://wa.me/628118712334"
+            target="_blank"
+            rel="noopener noreferrer">
+            <h1 className="font-semibold mb-1">+62 811 8712 334</h1>
+          </a>
           <p className="font-light text-sm">( Layanan Pelanggan )</p>
         </div>
       </div>

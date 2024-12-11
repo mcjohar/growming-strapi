@@ -15,7 +15,7 @@ export default function Navbar() {
 
       <div className="flex space-x-4 items-center p-2 md:space-x-6">
         <a
-          href="https://www.tiktok.com"
+          href="https://www.tiktok.com/@growming.studio?_t=ZS-8s7id7z82J0&_r=1"
           target="_blank"
           rel="noopener noreferrer"
         >
