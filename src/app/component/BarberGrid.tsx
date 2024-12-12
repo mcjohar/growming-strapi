@@ -5,8 +5,8 @@ export default function BarberGrid() {
     {
       id: 1,
       name: "Nastel",
-      image: "/image/barberman1.jpg",
-      rating: 4.5,
+      image: "/image/ASEP.png",
+      greeting: "Solusi pulang tampan",
       socials: {
         linkedin: "#",
         instagram: "#",
@@ -15,8 +15,8 @@ export default function BarberGrid() {
     {
       id: 2,
       name: "Kaleng Fanta",
-      image: "/image/barberman4.jpg",
-      rating: 5.0,
+      image: "/image/DAYAT.png",
+      greeting: "Diem itu layanan kan ya?",
       socials: {
         linkedin: "#",
         instagram: "#",
@@ -24,9 +24,9 @@ export default function BarberGrid() {
     },
     {
       id: 3,
-      name: "Zawil Irsyad",
-      image: "/image/barberman3.jpg",
-      rating: 4.8,
+      name: "Hendar",
+      image: "/image/HENDAR.png",
+      greeting: "Potong rambut itu asik",
       socials: {
         linkedin: "#",
         instagram: "#",
@@ -34,9 +34,9 @@ export default function BarberGrid() {
     },
     {
       id: 4,
-      name: "Diaz Faiz",
-      image: "/image/barberman2.jpg",
-      rating: 4.8,
+      name: "Wil",
+      image: "/image/IRSYAD.png",
+      greeting: "Pulang pulang ganteng",
       socials: {
         linkedin: "#",
         instagram: "#",
@@ -66,11 +66,13 @@ export default function BarberGrid() {
             <div className="text-left p-4 -mt-20  text-white">
               <h3 className="font-bold text-shadow-lg">{barber.name}</h3>
               <p className="text-sm mb-2 text-shadow-lg">
-                Rating: {barber.rating}
+                <i>
+                  "{barber.greeting}"
+                </i>
               </p>
             </div>
             <div className="text-center">
-              <a href="/booking"
+              <a href="/BookingService"
                 target="_blank"
                 rel="noopener noreferrer">
                 <button className=" px-8 py-2 mt-8 border-2 border-black text-black font-semibold rounded-md hover:bg-black hover:text-white transition">

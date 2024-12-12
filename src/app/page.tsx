@@ -31,13 +31,15 @@ export default function Home() {
           <p className=" font-semibold mt-16 text-center text-shadow-xl">
             WHERE YOUR HAIR<br></br> TRULY MATTER
           </p>
-          <Button variant="secondary" className="mt-16">
-            <a href="/booking"
-              target="_blank"
-              className="block w-full text-center">
+          <a href="/BookingService"
+            target="_blank"
+            className="block w-full text-center">
+            <Button variant="secondary" className="mt-16">
+
               Book Now
-            </a>
-          </Button>
+
+            </Button>
+          </a>
         </div>
       </div>
       <Information />
@@ -50,7 +52,7 @@ export default function Home() {
           <h1 className=" font-semibold text-3xl md:text-4xl md:max-w-lg">
             Hair Grooming and Styling you have to go
           </h1>
-          <a href="/booking"
+          <a href="/BookingService"
             target="_blank"
             rel="noopener noreferrer">
             <button className=" px-4 py-2 mt-10 mb-10 border-2 border-black text-black font-semibold text-xs rounded-md hover:bg-black hover:text-white transition"

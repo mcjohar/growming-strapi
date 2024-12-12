@@ -10,22 +10,20 @@ export default function PricingTabs() {
     <div className="bg-white">
       <div className="flex justify-center bg-[#487257] text-white py-4 ">
         <button
-          className={`px-8 py-2 text-lg ${
-            activeTab === "man"
+          className={`px-8 py-2 text-lg ${activeTab === "man"
               ? "border-b-2 border-white font-semibold"
               : "opacity-70"
-          }`}
+            }`}
           onClick={() => setActiveTab("man")}
         >
           MAN
         </button>
         <div className="border-l border-white h-full mx-4"></div>
         <button
-          className={`px-8 py-2 text-lg ${
-            activeTab === "woman"
+          className={`px-8 py-2 text-lg ${activeTab === "woman"
               ? "border-b-2 border-white font-semibold"
               : "opacity-70"
-          }`}
+            }`}
           onClick={() => setActiveTab("woman")}
         >
           WOMAN
