@@ -67,7 +67,7 @@ export default function BarberGrid() {
               <h3 className="font-bold text-shadow-lg">{barber.name}</h3>
               <p className="text-sm mb-2 text-shadow-lg">
                 <i>
-                  "{barber.greeting}"
+                  &quot;{barber.greeting}&quot;
                 </i>
               </p>
             </div>
