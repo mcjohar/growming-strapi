@@ -1,28 +1,319 @@
+"use client";
+
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import axios from "axios";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
+dayjs.locale("id");
+
+type Kapster = {
+    id: number;
+    name: string;
+    phone?: string | null;
+};
+
+type Layanan = {
+    id: number;
+    nalay: string;
+    harga: number;
+};
+
+export default function BookingForm() {
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const isDragging = useRef(false);
+    const startX = useRef(0);
+    const scrollLeft = useRef(0);
+
+    const [namaCustomer, setNamaCustomer] = useState("");
+    const [hpCustomer, setHpCustomer] = useState("");
+    const [tanggal, setTanggal] = useState("");
+    const [jam, setJam] = useState("");
+    const [kapster, setKapster] = useState("");
+    const [layanan, setLayanan] = useState("");
+    const [kapsterList, setKapsterList] = useState<Kapster[]>([]);
+    const [layananList, setLayananList] = useState<Layanan[]>([]);
+    const [bookedJamList, setBookedJamList] = useState<string[]>([]);
+
+    const jamOptions = [
+        "jam_10_00", "jam_11_00", "jam_12_00", "jam_13_00", "jam_14_00",
+        "jam_15_00", "jam_16_00", "jam_17_00", "jam_18_00", "jam_19_00",
+        "jam_20_00", "jam_21_00", "jam_22_00"
+    ];
+
+    const getNext30Days = () => {
+        const dates = [];
+        for (let i = 0; i < 30; i++) {
+            const d = dayjs().add(i, "day");
+            dates.push({
+                dateStr: d.format("YYYY-MM-DD"),
+                dayShort: d.format("ddd").toUpperCase(),
+                dateNum: d.format("DD"),
+            });
+        }
+        return dates;
+    };
+
+    const dateOptions = getNext30Days();
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!scrollContainerRef.current) return;
+        isDragging.current = true;
+        scrollContainerRef.current.classList.add("scrolling");
+        startX.current = e.pageX - scrollContainerRef.current.offsetLeft;
+        scrollLeft.current = scrollContainerRef.current.scrollLeft;
+    };
+
+    const handleMouseUp = () => {
+        isDragging.current = false;
+        scrollContainerRef.current?.classList.remove("scrolling");
+    };
+
+    const handleMouseLeave = () => {
+        isDragging.current = false;
+        scrollContainerRef.current?.classList.remove("scrolling");
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isDragging.current || !scrollContainerRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - scrollContainerRef.current.offsetLeft;
+        const walk = (x - startX.current) * 1.5;
+        scrollContainerRef.current.scrollLeft = scrollLeft.current - walk;
+    };
 
 
 
-export default function BookPage() {
+    const fetchKapsters = async () => {
+        try {
+            const res = await axios.get("https://growming-backend-production.up.railway.app/api/kapsters");
+            setKapsterList(res.data.data);
+        } catch (err) {
+            console.error("Gagal fetch kapsters:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchKapsters();
+        fetchLayanan(); // pastikan ini juga sudah dideklarasikan
+    }, []);
+
+    const fetchLayanan = async () => {
+        try {
+            const res = await axios.get("https://growming-backend-production.up.railway.app/api/layanans");
+            setLayananList(res.data.data);
+        } catch (err) {
+            console.error("Gagal fetch layanan:", err);
+        }
+    };
+
+
+    const fetchBookedJam = async () => {
+        if (kapster && tanggal) {
+            const res = await axios.get(
+                `https://growming-backend-production.up.railway.app/api/bookings?filters[kapster][id][$eq]=${kapster}&filters[tanggal][$eq]=${tanggal}`
+            );
+            const bookedJams = res.data.data.map((b: any) => b.jam);
+            setBookedJamList(bookedJams);
+            console.log("Jam yang sudah dibooking:", bookedJams);
+        }
+    };
+
+    useEffect(() => {
+        fetchKapsters();
+        fetchLayanan();
+    }, []);
+
+    useEffect(() => {
+        fetchBookedJam();
+    }, [kapster, tanggal]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const selectedKapster = kapsterList.find((k) => k.id === parseInt(kapster));
+        const namaKapster = selectedKapster?.name || "Kapster";
+        const jamFormatted = jam.replace("jam_", "").replace("_", ":");
+        const nomorAdmin = "628118712334";
+
+        const pesan = `Hello Growming, saya ${namaCustomer} sudah booking dengan ${namaKapster} di ${jamFormatted}, mohon di proses ya`;
+        const url = `https://wa.me/${nomorAdmin}?text=${encodeURIComponent(pesan)}`;
+
+        // WA dibuka duluan agar tidak diblokir browser
+        window.open(url, "_blank");
+
+        try {
+            await axios.post("https://growming-backend-production.up.railway.app/api/bookings", {
+                data: {
+                    nama_customer: namaCustomer,
+                    hp_customer: hpCustomer,
+                    tanggal,
+                    jam,
+                    kapster,
+                    layanan,
+                },
+            });
+
+            alert("Booking berhasil! WhatsApp sudah terbuka.");
+
+            // Reset form
+            setNamaCustomer("");
+            setHpCustomer("");
+            setTanggal("");
+            setJam("");
+            setKapster("");
+            setLayanan("");
+        } catch (err) {
+            console.error(err);
+            alert("Booking gagal");
+        }
+    };
 
 
     return (
-        <div className="h-screen w-full flex flex-col items-center pt-4">
-            <Link href="/">
+        <div className="bg-[#487257]">
+            <div className="pt-4 pb-2">
+                <div className="flex justify-center">
+                    <Image
+                        src="/icon/mainlogo-white.png"
+                        alt="Growming"
+                        width={522}
+                        height={72}
+                        className="max-w-60 h-auto md:max-w-[350px] flex justify-center"
+                    />
+                </div>
+            </div>
 
-                <Image
-                    src="/icon/mainlogo.svg"
-                    alt="logo"
-                    width={200}
-                    height={40}
-                    className=""
-                />
-            </Link>
+            <div className="max-w-md mx-auto p-6 bg-white md:max-w-full md:px-24 md:py-12">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                        type="text"
+                        placeholder="Masukan Nama Anda"
+                        className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                        value={namaCustomer}
+                        onChange={(e) => setNamaCustomer(e.target.value)}
+                        required
+                    />
 
-            <h1
-                className="font-bold text-xs tracking-[0.4em]">SCHEDULE</h1>
-            <iframe allow="geolocation" src="https://widget.zenwel.com/490250546/growming-studio?lang=id&lid=13300" width="100%" height="600"></iframe>
-            <h1>#GrowmingEveryday</h1>
-        </div >
+                    <input
+                        type="text"
+                        placeholder="Masukan Nomor Handphone Anda"
+                        className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                        value={hpCustomer}
+                        onChange={(e) => setHpCustomer(e.target.value)}
+                        required
+                    />
+
+                    <select
+                        className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                        value={layanan}
+                        onChange={(e) => setLayanan(e.target.value)}
+                        required
+                    >
+                        <option value="">Pilih Layanan</option>
+                        {layananList.map((l) => (
+                            <option key={l.id} value={l.id}>
+                                {l.nalay}
+                            </option>
+                        ))}
+                    </select>
+
+                    <select
+                        className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                        value={kapster}
+                        onChange={(e) => setKapster(e.target.value)}
+                        required
+                    >
+                        <option value="">Pilih Kapster</option>
+                        {kapsterList.map((k) => (
+                            <option key={k.id} value={k.id}>
+                                {k.name}
+                            </option>
+                        ))}
+                    </select>
+
+                    <div>
+                        <label className="block mb-2 font-semibold text-sm">Pilih Tanggal</label>
+
+                        <div
+                            ref={scrollContainerRef}
+                            onMouseDown={handleMouseDown}
+                            onMouseLeave={handleMouseLeave}
+                            onMouseUp={handleMouseUp}
+                            onMouseMove={handleMouseMove}
+                            className="flex md:hidden overflow-x-auto space-x-2 pb-2 scrollbar-hide cursor-grab active:cursor-grabbing select-none"
+                        >
+                            {dateOptions.map((d) => (
+                                <button
+                                    key={d.dateStr}
+                                    type="button"
+                                    onClick={() => setTanggal(d.dateStr)}
+                                    className={`flex flex-col items-center justify-center px-6 py-2 rounded-xl min-w-[60px] border ${tanggal === d.dateStr ? "bg-[#487257] text-white" : "bg-white text-gray-800"
+                                        }`}
+                                >
+                                    <span className="text-xs font-medium uppercase tracking-widest">{d.dayShort}</span>
+                                    <span className="text-xl font-semibold">{d.dateNum}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="hidden md:grid grid-cols-8 gap-2">
+                            {dateOptions.map((d) => (
+                                <button
+                                    key={d.dateStr}
+                                    type="button"
+                                    onClick={() => setTanggal(d.dateStr)}
+                                    className={`flex flex-col items-center justify-center py-3 rounded-xl border w-full ${tanggal === d.dateStr
+                                        ? "bg-[#487257] text-white"
+                                        : "bg-white text-gray-800 hover:bg-gray-100"
+                                        }`}
+                                >
+                                    <span className="text-xs font-medium uppercase">{d.dayShort}</span>
+                                    <span className="text-lg font-semibold">{d.dateNum}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block mb-2 font-semibold text-sm">Pilih Jam</label>
+                        <div className="flex flex-wrap gap-2">
+                            {jamOptions.map((j) => {
+                                const jamFormatted = j.replace("jam_", "").replace("_", ":");
+                                const isDisabled = bookedJamList.includes(j);
+                                const isSelected = jam === j;
+
+                                return (
+                                    <button
+                                        key={j}
+                                        type="button"
+                                        onClick={() => !isDisabled && setJam(j)}
+                                        disabled={isDisabled}
+                                        className={`px-4 py-2 rounded-lg border text-sm font-semibold transition-colors min-w-[80px]
+                      ${isDisabled
+                                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                : isSelected
+                                                    ? "bg-[#487257] text-white"
+                                                    : "bg-white text-gray-800 hover:bg-gray-100"
+                                            }`}
+                                    >
+                                        {jamFormatted}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="flex justify-center">
+                        <button
+                            type="submit"
+                            className="mt-4 w-full bg-[#487257] text-white md:bg-inherit md:text-black py-2 rounded-md md:outline hover:bg-[#487257] hover:outline-0 hover:text-white transition-colors md:max-w-96"
+                        >
+                            Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 }

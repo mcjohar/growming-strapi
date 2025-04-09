@@ -1,163 +1,98 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-export default function PricingTabs() {
-  const [activeTab, setActiveTab] = useState("man");
+interface Layanan {
+  id: number;
+  nalay: string;
+  deskripsi: string | null;
+  catatan: string | null;
+  kethar: string | null;
+  harga: string;
+}
+
+export default function HomePage() {
+  const [layanans, setLayanans] = useState<Layanan[]>([]);
+
+  useEffect(() => {
+    const fetchLayanan = async () => {
+      try {
+        const res = await fetch(
+          "https://growming-backend-production.up.railway.app/api/layanans",
+          { cache: "no-store" }
+        );
+        const json = await res.json();
+        const layananData = json.data?.map((item: any) => item) || [];
+        setLayanans(layananData);
+      } catch (error) {
+        console.error("Error fetching layanan:", error);
+      }
+    };
+
+    fetchLayanan();
+  }, []);
+
+  const renderLayananItem = (item: Layanan) => (
+    <div
+      key={item.id}
+      className="flex justify-between items-start border-b border-gray-300 pb-6 mb-6"
+    >
+      <div>
+        <h2 className="font-semibold text-xl">{item.nalay}</h2>
+        {item.deskripsi && (
+          <p className="text-sm text-gray-700 mt-1 max-w-64">{item.deskripsi}</p>
+        )}
+        {item.catatan && (
+          <p className="text-xs italic text-gray-500 mt-1">{item.catatan}</p>
+        )}
+      </div>
+      <div className="flex items-start">
+        {item.kethar && (
+          <p className="font-light text-sm pr-2 md:pr-6">{item.kethar}</p>
+        )}
+        <p className="font-bold text-lg">{item.harga}K</p>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="bg-white">
-      <div className="flex justify-center bg-[#487257] text-white py-4 ">
-        <button
-          className={`px-8 py-2 text-lg ${activeTab === "man"
-              ? "border-b-2 border-white font-semibold"
-              : "opacity-70"
-            }`}
-          onClick={() => setActiveTab("man")}
-        >
-          MAN
-        </button>
-        <div className="border-l border-white h-full mx-4"></div>
-        <button
-          className={`px-8 py-2 text-lg ${activeTab === "woman"
-              ? "border-b-2 border-white font-semibold"
-              : "opacity-70"
-            }`}
-          onClick={() => setActiveTab("woman")}
-        >
-          WOMAN
-        </button>
+    <div className="w-full bg-gray-100 min-h-screen">
+      <div className="bg-[#487257] w-full py-8">
+        <h1 className="text-2xl font-bold text-white text-center tracking-wide md:tracking-[10px]">
+          OUR SERVICES
+        </h1>
       </div>
 
-      <div className="py-12 px-12 mx-auto text-black md:h-[600px] w-auto md:px-28">
-        {activeTab === "man" && (
-          <div className="md:grid grid-cols-3">
-            <div className="max-w-96">
-              <div className="flex justify-between border-gray-400 pb-6 mb-4 ">
-                <div>
-                  <h2 className="font-semibold text-lg">Growming Haircut</h2>
-                </div>
-                <p className="font-bold text-lg">75K</p>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Growming Special</h2>
-                </div>
-                <p className="font-bold text-lg">100K</p>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Black Haircolor</h2>
-                </div>
-                <p className="font-bold text-lg">100K</p>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Basic Haircolor</h2>
-                </div>
-                <p className="font-bold text-lg">200K</p>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Fashion Haircolor</h2>
-                </div>
-                <div className="flex">
-                  {" "}
-                  <p className="font-light text-sm pt-1 pr-3">Start From</p>
-                  <p className="font-bold text-lg">200K</p>
-                </div>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Shaving</h2>
-                </div>
-                <p className="font-bold text-lg">45K</p>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Hair Tattoo</h2>
-                </div>
-                <p className="font-bold text-lg">35K</p>
-              </div>
+      <div className=" mx-auto px-6 mt-12 pb-12 md:px-28">
+        {layanans.length === 0 ? (
+          <p className="text-center text-gray-500">Loading layanan...</p>
+        ) : layanans.length <= 5 ? (
+          // Jika 5 layanan atau kurang, tampilkan satu kolom
+          layanans.map(renderLayananItem)
+        ) : (
+          // Jika lebih dari 5, tampilkan 3 kolom (kiri, gambar, kanan)
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Kolom kiri: 5 layanan pertama */}
+            <div className="flex flex-col">
+              {layanans.slice(0, 5).map(renderLayananItem)}
             </div>
 
-            <div className="hidden justify-center items-center md:flex">
+            {/* Kolom tengah: Gambar */}
+            <div className="hidden md:flex justify-center items-center">
               <Image
-                src="/icon/logofont.svg"
-                alt="Growming"
-                width={52}
-                height={42}
-                className=""
+                src="/icon/logofont.svg" // ganti sesuai kebutuhan
+                alt="Layanan Image"
+                width={250}
+                height={250}
+                className="h-[400px] object-contain"
               />
             </div>
 
-            <div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Beard Trimming</h2>
-                </div>
-                <p className="font-bold text-lg">35K</p>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Cream bath</h2>
-                </div>
-                <p className="font-bold text-lg">100K</p>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Hair Perming</h2>
-                </div>
-                <div className="flex">
-                  <p className="font-light text-sm pt-1 pr-3">Start From</p>
-                  <p className="font-bold text-lg">350K</p>
-                </div>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Down Perming</h2>
-                </div>
-                <div className="flex">
-                  <p className="font-light text-sm pt-1 pr-3">Start From</p>
-                  <p className="font-bold text-lg">350K</p>
-                </div>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Smoothing</h2>
-                </div>
-                <div className="flex">
-                  <p className="font-light text-sm pt-1 pr-3">Start From</p>
-                  <p className="font-bold text-lg">350K</p>
-                </div>
-              </div>
-              <div className="flex justify-between border-b border-gray-400 pb-6 mb-4">
-                <div>
-                  <h2 className="font-semibold text-lg">Conrow</h2>
-                </div>
-                <div className="flex">
-                  <p className="font-light text-sm pt-1 pr-3">Start From</p>
-                  <p className="font-bold text-lg">350K</p>
-                </div>
-              </div>
+            {/* Kolom kanan: sisa layanan */}
+            <div className="flex flex-col">
+              {layanans.slice(5).map(renderLayananItem)}
             </div>
-          </div>
-        )}
-
-        {activeTab === "woman" && (
-          <div className="flex flex-col justify-center items-center h-full py-10 ">
-            <p className="text-center text-xs mb-2 md:text-lg">
-              Coming Soon at!
-            </p>
-            <Image
-              src="/icon/verticallogo.png"
-              alt="WhatsApp"
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="w-[200px] md:w-[522px]"
-            />
           </div>
         )}
       </div>

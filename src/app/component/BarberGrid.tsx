@@ -1,82 +1,91 @@
-import Image from "next/image";
+"use client";
 
-export default function BarberGrid() {
-  const barbers = [
-    {
-      id: 1,
-      name: "Nastel",
-      image: "/image/ASEP.png",
-      greeting: "Solusi pulang tampan",
-      socials: {
-        linkedin: "#",
-        instagram: "#",
-      },
-    },
-    {
-      id: 2,
-      name: "Kaleng Fanta",
-      image: "/image/DAYAT.png",
-      greeting: "Diem itu layanan kan ya?",
-      socials: {
-        linkedin: "#",
-        instagram: "#",
-      },
-    },
-    {
-      id: 3,
-      name: "Hendar",
-      image: "/image/HENDAR.png",
-      greeting: "Potong rambut itu asik",
-      socials: {
-        linkedin: "#",
-        instagram: "#",
-      },
-    },
-    {
-      id: 4,
-      name: "Wil",
-      image: "/image/IRSYAD.png",
-      greeting: "Pulang pulang ganteng",
-      socials: {
-        linkedin: "#",
-        instagram: "#",
-      },
-    },
-  ];
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
+interface Kapster {
+  id: number;
+  name: string;
+  bio: string;
+  photoUrl: string;
+}
+
+export default function KapsterGrid() {
+  const extractTextFromRichText = (richText: any[]) => {
+    return richText
+      ?.map((block) =>
+        block.children?.map((child: any) => child.text).join(" ")
+      )
+      .join(" ") || "Bio belum diisi";
+  };
+
+  const [kapsters, setKapsters] = useState<Kapster[]>([]);
+
+  useEffect(() => {
+    const fetchKapsters = async () => {
+      try {
+        const res = await fetch(
+          "https://growming-backend-production.up.railway.app/api/kapsters?populate=*"
+        );
+        const json = await res.json();
+
+        const mapped = json.data.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          bio: extractTextFromRichText(item.bio),
+          photoUrl:
+            item.photo?.[0]?.formats?.medium?.url ||
+            item.photo?.[0]?.url ||
+            "",
+        }));
+
+        setKapsters(mapped);
+      } catch (err) {
+        console.error("Gagal fetch kapster:", err);
+      }
+    };
+
+    fetchKapsters();
+  }, []);
 
   return (
-    <div className="flex justify-center px-10 md:px-28 bg-white">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {barbers.map((barber) => (
+    <div className="flex justify-center px-6 md:px-20 bg-white py-10">
+      <div
+        className={`grid gap-10 ${kapsters.length === 1
+          ? "grid-cols-1"
+          : kapsters.length === 2
+            ? "grid-cols-1 md:grid-cols-2"
+            : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          }`}
+      >
+        {kapsters.map((kapster) => (
           <div
-            key={barber.id}
-            className="relative rounded-lg overflow-hidden group"
+            key={kapster.id}
+            className="relative overflow-hidden group w-full max-w-md mx-auto"
           >
-            <div>
-              <Image
-                src={barber.image}
-                alt={barber.name}
-                width={300}
-                height={150}
-                className="object-cover rounded-lg"
-              />
-            </div>
+            {kapster.photoUrl && (
+              <div className="relative">
+                <Image
+                  src={`https://growming-backend-production.up.railway.app${kapster.photoUrl}`}
+                  alt={kapster.name}
+                  width={800}
+                  height={800}
+                  className="object-cover w-full h-[500px] rounded-lg"
+                />
 
+                {/* Overlay Nama dan Bio */}
+                <div className="absolute bottom-0 left-0 w-full text-white px-4 py-3">
+                  <h3 className="font-bold text-lg">{kapster.name}</h3>
+                  <p className="text-sm italic truncate">"{kapster.bio}"</p>
+                </div>
+              </div>
+            )}
 
-            <div className="text-left p-4 -mt-20  text-white">
-              <h3 className="font-bold text-shadow-lg">{barber.name}</h3>
-              <p className="text-sm mb-2 text-shadow-lg">
-                <i>
-                  &quot;{barber.greeting}&quot;
-                </i>
-              </p>
-            </div>
-            <div className="text-center">
-              <a href="/BookingService"
-                target="_blank"
-                rel="noopener noreferrer">
-                <button className=" px-8 py-2 mt-8 border-2 border-black text-black font-semibold rounded-md hover:bg-black hover:text-white transition">
-                  Book
+            {/* Tombol Book */}
+            <div className="text-center p-4">
+              <a href="/BookingService">
+                <button className="px-6 py-2 border-2 border-black text-black font-semibold rounded-md hover:bg-black hover:text-white transition">
+                  Book Now
                 </button>
               </a>
             </div>

@@ -25,7 +25,7 @@ export default function Home() {
             height={72}
             className="max-w-72 h-auto md:max-w-[350px]"
           />
-          <p className="tracking-[0.4em] font-semibold text-shadow-xl">
+          <p className="tracking-[8px] font-semibold text-shadow-xl">
             HAIR STUDIO
           </p>
           <p className=" font-semibold mt-16 text-center text-shadow-xl">
@@ -44,6 +44,8 @@ export default function Home() {
       </div>
       <Information />
       <PricingTabs />
+      <br />
+      <br />
       <BarberGrid />
       <br />
       <br />
