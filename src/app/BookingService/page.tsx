@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -82,38 +82,34 @@ export default function BookingForm() {
         scrollContainerRef.current.scrollLeft = scrollLeft.current - walk;
     };
 
-
-
-    const fetchKapsters = async () => {
+    const fetchKapsters = useCallback(async () => {
         try {
-            const res = await axios.get("https://growming-backend-production.up.railway.app/api/kapsters");
+            const res = await axios.get<{ data: Kapster[] }>(
+                "https://growming-backend-production.up.railway.app/api/kapsters"
+            );
             setKapsterList(res.data.data);
         } catch (err) {
             console.error("Gagal fetch kapsters:", err);
         }
-    };
-
-    useEffect(() => {
-        fetchKapsters();
-        fetchLayanan(); // pastikan ini juga sudah dideklarasikan
     }, []);
 
-    const fetchLayanan = async () => {
+    const fetchLayanan = useCallback(async () => {
         try {
-            const res = await axios.get("https://growming-backend-production.up.railway.app/api/layanans");
+            const res = await axios.get<{ data: Layanan[] }>(
+                "https://growming-backend-production.up.railway.app/api/layanans"
+            );
             setLayananList(res.data.data);
         } catch (err) {
             console.error("Gagal fetch layanan:", err);
         }
-    };
-
+    }, []);
 
     const fetchBookedJam = async () => {
         if (kapster && tanggal) {
-            const res = await axios.get(
+            const res = await axios.get<{ data: { jam: string }[] }>(
                 `https://growming-backend-production.up.railway.app/api/bookings?filters[kapster][id][$eq]=${kapster}&filters[tanggal][$eq]=${tanggal}`
             );
-            const bookedJams = res.data.data.map((b: any) => b.jam);
+            const bookedJams = res.data.data.map((b) => b.jam);
             setBookedJamList(bookedJams);
             console.log("Jam yang sudah dibooking:", bookedJams);
         }
@@ -122,7 +118,7 @@ export default function BookingForm() {
     useEffect(() => {
         fetchKapsters();
         fetchLayanan();
-    }, []);
+    }, [fetchKapsters, fetchLayanan]);
 
     useEffect(() => {
         fetchBookedJam();
@@ -168,7 +164,6 @@ export default function BookingForm() {
             alert("Booking gagal");
         }
     };
-
 
     return (
         <div className="bg-[#487257]">
@@ -265,53 +260,47 @@ export default function BookingForm() {
                                     onClick={() => setTanggal(d.dateStr)}
                                     className={`flex flex-col items-center justify-center py-3 rounded-xl border w-full ${tanggal === d.dateStr
                                         ? "bg-[#487257] text-white"
-                                        : "bg-white text-gray-800 hover:bg-gray-100"
+                                        : "bg-white text-gray-800"
                                         }`}
                                 >
-                                    <span className="text-xs font-medium uppercase">{d.dayShort}</span>
-                                    <span className="text-lg font-semibold">{d.dateNum}</span>
+                                    <span className="text-xs font-medium uppercase tracking-widest">{d.dayShort}</span>
+                                    <span className="text-xl font-semibold">{d.dateNum}</span>
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block mb-2 font-semibold text-sm">Pilih Jam</label>
-                        <div className="flex flex-wrap gap-2">
-                            {jamOptions.map((j) => {
-                                const jamFormatted = j.replace("jam_", "").replace("_", ":");
-                                const isDisabled = bookedJamList.includes(j);
-                                const isSelected = jam === j;
-
-                                return (
-                                    <button
-                                        key={j}
-                                        type="button"
-                                        onClick={() => !isDisabled && setJam(j)}
-                                        disabled={isDisabled}
-                                        className={`px-4 py-2 rounded-lg border text-sm font-semibold transition-colors min-w-[80px]
-                      ${isDisabled
-                                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                                : isSelected
-                                                    ? "bg-[#487257] text-white"
-                                                    : "bg-white text-gray-800 hover:bg-gray-100"
-                                            }`}
-                                    >
-                                        {jamFormatted}
-                                    </button>
-                                );
-                            })}
-                        </div>
+                    <div className="flex flex-wrap gap-2">
+                        {jamOptions.map((j) => {
+                            const jamFormatted = j.replace("jam_", "").replace("_", ":");
+                            const isBooked = bookedJamList.includes(j);
+                            const isSelected = jam === j;
+                            return (
+                                <button
+                                    key={j}
+                                    type="button"
+                                    onClick={() => !isBooked && setJam(j)}
+                                    disabled={isBooked}
+                                    className={`px-4 py-2 rounded-lg border text-sm font-semibold transition-colors min-w-[80px]
+                                    ${isBooked
+                                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                            : isSelected
+                                                ? "bg-[#487257] text-white"
+                                                : "bg-white text-gray-800 hover:bg-gray-100"
+                                        }`}
+                                >
+                                    {jamFormatted}
+                                </button>
+                            );
+                        })}
                     </div>
 
-                    <div className="flex justify-center">
-                        <button
-                            type="submit"
-                            className="mt-4 w-full bg-[#487257] text-white md:bg-inherit md:text-black py-2 rounded-md md:outline hover:bg-[#487257] hover:outline-0 hover:text-white transition-colors md:max-w-96"
-                        >
-                            Booking
-                        </button>
-                    </div>
+                    <button
+                        type="submit"
+                        className="w-full bg-[#487257] text-white py-3 rounded-lg font-semibold text-lg"
+                    >
+                        Booking
+                    </button>
                 </form>
             </div>
         </div>
