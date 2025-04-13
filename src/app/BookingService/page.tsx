@@ -34,6 +34,7 @@ export default function BookingForm() {
     const [kapsterList, setKapsterList] = useState<Kapster[]>([]);
     const [layananList, setLayananList] = useState<Layanan[]>([]);
     const [bookedJamList, setBookedJamList] = useState<string[]>([]);
+    const [loadingJam, setLoadingJam] = useState(false);
 
     const jamOptions = [
         "jam_10_00", "jam_11_00", "jam_12_00", "jam_13_00", "jam_14_00",
@@ -42,7 +43,7 @@ export default function BookingForm() {
     ];
 
     const getNext30Days = () => {
-        const dates: any[] = []; // ← biar fleksibel sesuai setting TypeScript kamu
+        const dates: any[] = [];
         for (let i = 0; i < 30; i++) {
             const d = dayjs().add(i, "day");
             dates.push({
@@ -53,7 +54,6 @@ export default function BookingForm() {
         }
         return dates;
     };
-
 
     const dateOptions = getNext30Days();
 
@@ -107,12 +107,20 @@ export default function BookingForm() {
 
     const fetchBookedJam = async () => {
         if (kapster && tanggal) {
-            const res = await axios.get<{ data: { jam: string }[] }>(
-                `https://growming-backend-production.up.railway.app/api/bookings?filters[kapster][id][$eq]=${kapster}&filters[tanggal][$eq]=${tanggal}`
-            );
-            const bookedJams = res.data.data.map((b) => b.jam);
-            setBookedJamList(bookedJams);
-            console.log("Jam yang sudah dibooking:", bookedJams);
+            setLoadingJam(true);
+            try {
+                const res = await axios.get<{ data: { jam: string }[] }>(
+                    `https://growming-backend-production.up.railway.app/api/bookings?filters[kapster][id][$eq]=${kapster}&filters[tanggal][$eq]=${tanggal}`
+                );
+                const bookedJams = res.data.data.map((b) => b.jam);
+                setBookedJamList(bookedJams);
+            } catch (error) {
+                console.error("Gagal ambil jadwal:", error);
+            } finally {
+                setLoadingJam(false);
+            }
+        } else {
+            setBookedJamList([]);
         }
     };
 
@@ -122,6 +130,7 @@ export default function BookingForm() {
     }, [fetchKapsters, fetchLayanan]);
 
     useEffect(() => {
+        setJam(""); // reset jam saat tanggal atau kapster berubah
         fetchBookedJam();
     }, [kapster, tanggal]);
 
@@ -172,7 +181,6 @@ export default function BookingForm() {
         tanggal !== "" &&
         jam !== "";
 
-
     return (
         <div className="bg-[#487257]">
             <div className="pt-4 pb-2">
@@ -182,9 +190,8 @@ export default function BookingForm() {
                         alt="Growming"
                         width={522}
                         height={72}
-                        className="max-w-60 h-auto md:max-w-[350px] flex justify-center"
+                        className="max-w-60 h-auto md:max-w-[350px]"
                     />
-
                 </div>
                 <h1 className="flex justify-center pt-1 text-white font font-semibold tracking-[8px]">SCHEDULE</h1>
             </div>
@@ -239,7 +246,6 @@ export default function BookingForm() {
 
                     <div>
                         <label className="block mb-2 font-semibold text-sm">Pilih Tanggal</label>
-
                         <div
                             ref={scrollContainerRef}
                             onMouseDown={handleMouseDown}
@@ -280,25 +286,38 @@ export default function BookingForm() {
                         </div>
                     </div>
 
+                    {loadingJam && (
+                        <div className="flex items-center space-x-2 text-sm text-gray-500 italic mb-2">
+                            <div className="w-4 h-4 border-2 border-gray-300 border-t-[#487257] rounded-full animate-spin" />
+                            <span>Memuat jadwal kapster...</span>
+                        </div>
+                    )}
+
+
                     <div className="flex flex-wrap gap-2">
                         {jamOptions.map((j) => {
                             const jamFormatted = j.replace("jam_", "").replace("_", ":");
                             const isBooked = bookedJamList.includes(j);
                             const isSelected = jam === j;
+                            const isDisabled = loadingJam || isBooked;
+
                             return (
                                 <button
                                     key={j}
                                     type="button"
-                                    onClick={() => !isBooked && setJam(j)}
-                                    disabled={isBooked}
+                                    onClick={() => !isDisabled && setJam(j)}
+                                    disabled={isDisabled}
                                     className={`px-4 py-2 rounded-lg border text-sm font-semibold transition-colors min-w-[80px]
-                                    ${isBooked
-                                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                            : isSelected
-                                                ? "bg-[#487257] text-white"
-                                                : "bg-white text-gray-800 hover:bg-gray-100"
+                                    ${loadingJam
+                                            ? "bg-gray-100 text-gray-300 animate-pulse cursor-wait"
+                                            : isBooked
+                                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                : isSelected
+                                                    ? "bg-[#487257] text-white"
+                                                    : "bg-white text-gray-800 hover:bg-gray-100"
                                         }`}
                                 >
+
                                     {jamFormatted}
                                 </button>
                             );
@@ -309,13 +328,12 @@ export default function BookingForm() {
                         type="submit"
                         disabled={!isFormValid}
                         className={`w-full py-3 rounded-lg font-semibold text-lg transition-colors ${isFormValid
-                                ? "bg-[#487257] text-white"
-                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            ? "bg-[#487257] text-white"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
                             }`}
                     >
                         Booking
                     </button>
-
                 </form>
             </div>
         </div>
