@@ -36,9 +36,19 @@ export default function BookingForm() {
     const [bookedJamList, setBookedJamList] = useState<string[]>([]);
 
     const jamOptions = [
-        "jam_10_00", "jam_11_00", "jam_12_00", "jam_13_00", "jam_14_00",
-        "jam_15_00", "jam_16_00", "jam_17_00", "jam_18_00", "jam_19_00",
-        "jam_20_00", "jam_21_00", "jam_22_00"
+        "jam_10_00",
+        "jam_11_00",
+        "jam_12_00",
+        "jam_13_00",
+        "jam_14_00",
+        "jam_15_00",
+        "jam_16_00",
+        "jam_17_00",
+        "jam_18_00",
+        "jam_19_00",
+        "jam_20_00",
+        "jam_21_00",
+        "jam_22_00",
     ];
 
     const getNext30Days = () => {
@@ -104,16 +114,23 @@ export default function BookingForm() {
         }
     }, []);
 
-    const fetchBookedJam = async () => {
+    const fetchBookedJam = useCallback(async () => {
         if (kapster && tanggal) {
-            const res = await axios.get<{ data: { jam: string }[] }>(
-                `https://growming-backend-production.up.railway.app/api/bookings?filters[kapster][id][$eq]=${kapster}&filters[tanggal][$eq]=${tanggal}`
-            );
-            const bookedJams = res.data.data.map((b) => b.jam);
-            setBookedJamList(bookedJams);
-            console.log("Jam yang sudah dibooking:", bookedJams);
+            try {
+                const res = await axios.get<{ data: { jam: string }[] }>(
+                    `https://growming-backend-production.up.railway.app/api/bookings?filters[kapster][id][$eq]=${kapster}&filters[tanggal][$eq]=${tanggal}`
+                );
+                const bookedJams = res.data.data.map((b) => b.jam);
+                setBookedJamList(bookedJams);
+                console.log("Jam yang sudah dibooking:", bookedJams);
+            } catch (err) {
+                console.error("Gagal fetch booked jam:", err);
+            }
+        } else {
+            // Bersihkan bookedJamList jika kapster atau tanggal belum diisi
+            setBookedJamList([]);
         }
-    };
+    }, [kapster, tanggal]);
 
     useEffect(() => {
         fetchKapsters();
@@ -122,7 +139,7 @@ export default function BookingForm() {
 
     useEffect(() => {
         fetchBookedJam();
-    }, [kapster, tanggal]);
+    }, [fetchBookedJam]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -135,7 +152,7 @@ export default function BookingForm() {
         const pesan = `Hello Growming, saya ${namaCustomer} sudah booking dengan ${namaKapster} di ${jamFormatted}, mohon di proses ya`;
         const url = `https://wa.me/${nomorAdmin}?text=${encodeURIComponent(pesan)}`;
 
-        // WA dibuka duluan agar tidak diblokir browser
+        // Buka WhatsApp terlebih dahulu agar tidak diblokir browser
         window.open(url, "_blank");
 
         try {
@@ -246,7 +263,9 @@ export default function BookingForm() {
                                     className={`flex flex-col items-center justify-center px-6 py-2 rounded-xl min-w-[60px] border ${tanggal === d.dateStr ? "bg-[#487257] text-white" : "bg-white text-gray-800"
                                         }`}
                                 >
-                                    <span className="text-xs font-medium uppercase tracking-widest">{d.dayShort}</span>
+                                    <span className="text-xs font-medium uppercase tracking-widest">
+                                        {d.dayShort}
+                                    </span>
                                     <span className="text-xl font-semibold">{d.dateNum}</span>
                                 </button>
                             ))}
@@ -258,12 +277,12 @@ export default function BookingForm() {
                                     key={d.dateStr}
                                     type="button"
                                     onClick={() => setTanggal(d.dateStr)}
-                                    className={`flex flex-col items-center justify-center py-3 rounded-xl border w-full ${tanggal === d.dateStr
-                                        ? "bg-[#487257] text-white"
-                                        : "bg-white text-gray-800"
+                                    className={`flex flex-col items-center justify-center py-3 rounded-xl border w-full ${tanggal === d.dateStr ? "bg-[#487257] text-white" : "bg-white text-gray-800"
                                         }`}
                                 >
-                                    <span className="text-xs font-medium uppercase tracking-widest">{d.dayShort}</span>
+                                    <span className="text-xs font-medium uppercase tracking-widest">
+                                        {d.dayShort}
+                                    </span>
                                     <span className="text-xl font-semibold">{d.dateNum}</span>
                                 </button>
                             ))}
@@ -281,8 +300,7 @@ export default function BookingForm() {
                                     type="button"
                                     onClick={() => !isBooked && setJam(j)}
                                     disabled={isBooked}
-                                    className={`px-4 py-2 rounded-lg border text-sm font-semibold transition-colors min-w-[80px]
-                                    ${isBooked
+                                    className={`px-4 py-2 rounded-lg border text-sm font-semibold transition-colors min-w-[80px] ${isBooked
                                             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                                             : isSelected
                                                 ? "bg-[#487257] text-white"
