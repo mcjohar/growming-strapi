@@ -164,6 +164,15 @@ export default function BookingForm() {
         }
     };
 
+    const isFormValid =
+        namaCustomer.trim() !== "" &&
+        hpCustomer.trim() !== "" &&
+        kapster !== "" &&
+        layanan !== "" &&
+        tanggal !== "" &&
+        jam !== "";
+
+
     return (
         <div className="bg-[#487257]">
             <div className="pt-4 pb-2">
@@ -298,10 +307,15 @@ export default function BookingForm() {
 
                     <button
                         type="submit"
-                        className="w-full bg-[#487257] text-white py-3 rounded-lg font-semibold text-lg"
+                        disabled={!isFormValid}
+                        className={`w-full py-3 rounded-lg font-semibold text-lg transition-colors ${isFormValid
+                                ? "bg-[#487257] text-white"
+                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            }`}
                     >
                         Booking
                     </button>
+
                 </form>
             </div>
         </div>
