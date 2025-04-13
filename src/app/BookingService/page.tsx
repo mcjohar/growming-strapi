@@ -42,7 +42,7 @@ export default function BookingForm() {
     ];
 
     const getNext30Days = () => {
-        const dates = [];
+        const dates: any[] = []; // ← biar fleksibel sesuai setting TypeScript kamu
         for (let i = 0; i < 30; i++) {
             const d = dayjs().add(i, "day");
             dates.push({
@@ -53,6 +53,7 @@ export default function BookingForm() {
         }
         return dates;
     };
+
 
     const dateOptions = getNext30Days();
 
