@@ -136,7 +136,6 @@ export default function BookingForm() {
         const pesan = `Hello Growming, saya ${namaCustomer} sudah booking dengan ${namaKapster} di ${jamFormatted}, mohon di proses ya`;
         const url = `https://wa.me/${nomorAdmin}?text=${encodeURIComponent(pesan)}`;
 
-        // WA dibuka duluan agar tidak diblokir browser
         window.open(url, "_blank");
 
         try {
@@ -153,7 +152,6 @@ export default function BookingForm() {
 
             alert("Booking berhasil! WhatsApp sudah terbuka.");
 
-            // Reset form
             setNamaCustomer("");
             setHpCustomer("");
             setTanggal("");
@@ -177,7 +175,9 @@ export default function BookingForm() {
                         height={72}
                         className="max-w-60 h-auto md:max-w-[350px] flex justify-center"
                     />
+
                 </div>
+                <h1 className="flex justify-center pt-1 text-white font font-semibold tracking-[8px]">SCHEDULE</h1>
             </div>
 
             <div className="max-w-md mx-auto p-6 bg-white md:max-w-full md:px-24 md:py-12">
